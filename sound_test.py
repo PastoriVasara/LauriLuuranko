@@ -106,6 +106,8 @@ def toggle_recording(e):
         upload_to_dropbox(file_path, dest_path, access_token)
         text_to_speak = runpod_test.get_transcription()
         ai_skeleton.play_audio(text_to_speak)
+        pygame.mixer.music.load("listening.mp3")
+        pygame.mixer.music.play()
         #get_shareable_link(dest_path, access_token,des  t_path)
 
 
