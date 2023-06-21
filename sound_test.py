@@ -10,8 +10,8 @@ import runpod_test
 import ai_skeleton
 from dotenv import load_dotenv
 import os
-
-
+import soundfile as sf
+import pygame
 
 
 def upload_to_dropbox(file_path, dest_path, access_token):
@@ -80,8 +80,8 @@ class Recorder:
 
     def save_recording(self, filename):
         if not self.is_recording and len(self.frames) > 0:
-            self.recording = np.concatenate(self.frames)
-            write(filename, self.fs, self.recording)
+            self.recording = np.concatenate(self.frames)  
+            sf.write(filename, self.recording, self.fs)
 
 
 
@@ -89,7 +89,11 @@ class Recorder:
 
 
 recorder = Recorder()
+print("Welcome to the skeleton fortuneteller")
 
+pygame.mixer.init()
+pygame.mixer.music.load("greetings.mp3")
+pygame.mixer.music.play()
 def toggle_recording(e):
     if not recorder.is_recording:
         recorder.start_recording()
