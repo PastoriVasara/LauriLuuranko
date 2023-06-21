@@ -47,7 +47,7 @@ def get_shareable_link(dest_path, access_token,file_path):
 
 
 class Recorder:
-    def __init__(self, fs=44100):
+    def __init__(self, fs=16000):
         self.fs = fs
         self.is_recording = False
         self.frames = []
