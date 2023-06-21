@@ -91,9 +91,7 @@ try:
     recorder = Recorder()
     print("Welcome to the skeleton fortuneteller")
 
-    pygame.mixer.init()
-    pygame.mixer.music.load("greetings.mp3")
-    pygame.mixer.music.play()
+  
     def toggle_recording(e):
         if not recorder.is_recording:
             recorder.start_recording()
@@ -117,4 +115,5 @@ try:
 
     keyboard.wait()
 except Exception as e:
+    print(e)
     sys.exit(1)
