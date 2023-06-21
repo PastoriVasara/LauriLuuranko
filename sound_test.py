@@ -1,7 +1,6 @@
 import sounddevice as sd
 import numpy as np
 import keyboard
-from scipy.io.wavfile import write
 import dropbox
 from dropbox.exceptions import AuthError
 from dropbox.exceptions import ApiError
