@@ -56,7 +56,7 @@ class Recorder:
         print("Recording Audio")
         self.is_recording = True
         self.frames = []
-        self.stream = sd.InputStream(callback=self.callback, channels=2, samplerate=self.fs, dtype='float32')
+        self.stream = sd.InputStream(callback=self.callback, channels=1, samplerate=self.fs, dtype='float32')
         self.stream.start()
 
     def stop_recording(self):
