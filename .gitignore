@@ -1,0 +1,4 @@
+*.wav
+.env
+.dropbox_token
+/__pycache__/
