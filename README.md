@@ -1,0 +1,2 @@
+# LauriLuuranko
+lauri luurangon ennustuskoppi
