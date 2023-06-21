@@ -4,9 +4,13 @@ from dotenv import load_dotenv
 from elevenlabs import set_api_key,generate, play,voices,stream, VoiceSettings
 from elevenlabs.api import Voices
 import sys
+import pygame
+
 
 def play_audio(given_content):
-
+  pygame.mixer.init()
+  pygame.mixer.music.load("interesting.mp3")
+  pygame.mixer.music.play()
   load_dotenv()
   openai.api_key = os.getenv("OPENAI_API_KEY")
   set_api_key(os.getenv("ELEVEN_LABS_API_KEY"))

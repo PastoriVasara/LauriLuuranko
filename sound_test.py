@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 import os
 import soundfile as sf
 import pygame
+import sys
 
 
 def upload_to_dropbox(file_path, dest_path, access_token):
@@ -86,32 +87,34 @@ class Recorder:
 
 # Call the function
 
+try:
+    recorder = Recorder()
+    print("Welcome to the skeleton fortuneteller")
 
-recorder = Recorder()
-print("Welcome to the skeleton fortuneteller")
-
-pygame.mixer.init()
-pygame.mixer.music.load("greetings.mp3")
-pygame.mixer.music.play()
-def toggle_recording(e):
-    if not recorder.is_recording:
-        recorder.start_recording()
-    else:
-        load_dotenv()
-        recorder.stop_recording()
-        recorder.save_recording("test2.wav")
-        access_token = os.getenv("DROPBOX_KEY")
-        file_path = 'test2.wav'  # local file path
-        dest_path = '/recording.wav'  # path on Dropbox
-        upload_to_dropbox(file_path, dest_path, access_token)
-        text_to_speak = runpod_test.get_transcription()
-        ai_skeleton.play_audio(text_to_speak)
-        pygame.mixer.music.load("listening.mp3")
-        pygame.mixer.music.play()
-        #get_shareable_link(dest_path, access_token,des  t_path)
+    pygame.mixer.init()
+    pygame.mixer.music.load("greetings.mp3")
+    pygame.mixer.music.play()
+    def toggle_recording(e):
+        if not recorder.is_recording:
+            recorder.start_recording()
+        else:
+            load_dotenv()
+            recorder.stop_recording()
+            recorder.save_recording("test2.wav")
+            access_token = os.getenv("DROPBOX_KEY")
+            file_path = 'test2.wav'  # local file path
+            dest_path = '/recording.wav'  # path on Dropbox
+            upload_to_dropbox(file_path, dest_path, access_token)
+            text_to_speak = runpod_test.get_transcription()
+            ai_skeleton.play_audio(text_to_speak)
+            pygame.mixer.music.load("listening.mp3")
+            pygame.mixer.music.play()
+            #get_shareable_link(dest_path, access_token,des  t_path)
 
 
 
-keyboard.on_press_key("space", toggle_recording)
+    keyboard.on_press_key("space", toggle_recording)
 
-keyboard.wait()   
+    keyboard.wait()
+except Exception as e:
+    sys.exit(1)
