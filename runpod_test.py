@@ -1,15 +1,25 @@
 import requests
 from dotenv import load_dotenv
 import os
+import time
+import string
+import random
+def generate_random_string(length=9):
+    # Define the characters that will be used
+    alphabet = string.ascii_letters + string.digits
 
-def get_transcription():
+    # Use random.choice to select characters randomly
+    return ''.join(random.choice(alphabet) for i in range(length))
+
+def get_transcription(file_path):
     load_dotenv()
     url = "https://api.runpod.ai/v2/faster-whisper/run"
     status = "https://api.runpod.ai/v2/faster-whisper/status/"
     API_KEY = os.getenv("RUN_POD_API")
-    voice_url = os.getenv("audio_url")
+    SOUND_URL = os.getenv("audio_url")
+    addition = f"?{generate_random_string()}={generate_random_string()}"
     payload = {"input": {
-        "audio": voice_url,
+        "audio": SOUND_URL+file_path+addition,
         "model": "large-v2",
         "transcription": "plain text",
         "translate": False,
@@ -33,7 +43,6 @@ def get_transcription():
         "content-type": "application/json",
          "Authorization": "Bearer " + API_KEY
     }
-
     response = requests.post(url, json=payload, headers=headers)
 
     print(response.text)

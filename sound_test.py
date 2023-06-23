@@ -1,9 +1,6 @@
 import sounddevice as sd
 import numpy as np
 import keyboard
-import dropbox
-from dropbox.exceptions import AuthError
-from dropbox.exceptions import ApiError
 import requests
 import runpod_test
 import ai_skeleton
@@ -12,35 +9,11 @@ import os
 import soundfile as sf
 import pygame
 import sys
+import upload_audio
+import string
+import random
 
 
-def upload_to_dropbox(file_path, dest_path, access_token):
-
-    dbx = dropbox.Dropbox(access_token)
-    with open(file_path, 'rb') as f:
-        try:
-            dbx.files_upload(f.read(), dest_path, mute=True, mode=dropbox.files.WriteMode('overwrite'))
-        except AuthError as err:
-            print(f"ERROR: {err}")
-    print("Uploaded:", dest_path)
-
-def get_shareable_link(dest_path, access_token,file_path):
-    dbx = dropbox.Dropbox(access_token)
-
-    try:
-        shared_link_metadata = dbx.sharing_create_shared_link_with_settings(file_path)
-        link = shared_link_metadata.url
-        print(link)
-    except ApiError as api_error:
-        if 'shared_link_already_exists' in api_error.error.get_path().get_error().description:
-            links = dbx.sharing_list_shared_links(path=file_path).links
-            if links:
-                link = links[0].url
-                print(link)
-        else:
-            raise api_error
-
-    
 
     
 
@@ -88,34 +61,44 @@ class Recorder:
 # Call the function
 
 
-    recorder = Recorder()
-    print("Welcome to the skeleton fortuneteller")
-    pygame.mixer.init()
-    pygame.mixer.music.load("greetings.mp3")
-    pygame.mixer.music.play()
+recorder = Recorder()
+print("Welcome to the skeleton fortuneteller")
+pygame.mixer.init()
+pygame.mixer.music.load("greetings.mp3")
+pygame.mixer.music.play()
 
-    def toggle_recording(e):
-        try:
-            if not recorder.is_recording:
-                recorder.start_recording()
-            else:
-                load_dotenv()
-                recorder.stop_recording()
-                recorder.save_recording("test2.wav")
-                access_token = os.getenv("DROPBOX_KEY")
-                file_path = 'test2.wav'  # local file path
-                dest_path = '/recording.wav'  # path on Dropbox
-                upload_to_dropbox(file_path, dest_path, access_token)
-                text_to_speak = runpod_test.get_transcription()
-                ai_skeleton.play_audio(text_to_speak)
-                pygame.mixer.music.load("listening.mp3")
-                pygame.mixer.music.play()
-                #get_shareable_link(dest_path, access_token,des  t_path)
-        except Exception as e:
-            print(e)
-            sys.exit(1)
+def generate_random_string(length=9):
+    # Define the characters that will be used
+    alphabet = string.ascii_letters + string.digits
+
+    # Use random.choice to select characters randomly
+    return ''.join(random.choice(alphabet) for i in range(length))
 
 
-    keyboard.on_press_key("space", toggle_recording)
+def toggle_recording(e):  
+    try:          
+        if not recorder.is_recording:
+            recorder.start_recording()
+        else:
+            load_dotenv()
+            source = os.getenv("SOURCE")
+            destination = os.getenv("DESTINATION")
+            recorder.stop_recording()
+            file_path = generate_random_string()+".wav"
+            recorder.save_recording(file_path)
+            upload_audio.uploadAudio(file_path,source,destination)
+            pygame.mixer.music.load("interesting.mp3")
+            pygame.mixer.music.play()
+            text_to_speak = runpod_test.get_transcription(file_path)  
+            ai_skeleton.play_audio(text_to_speak)
+            pygame.mixer.music.load("listening.mp3")
+            pygame.mixer.music.play()
+            os.remove(os.path.join(source, file_path))  
+    except Exception as e:
+        print(e)
+        sys.exit(1)
 
-    keyboard.wait()
+
+keyboard.on_press_key("space", toggle_recording)
+
+keyboard.wait()

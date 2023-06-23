@@ -8,15 +8,8 @@ import pygame
 
 
 def play_audio(given_content):
-  pygame.mixer.init()
-  pygame.mixer.music.load("interesting.mp3")
-  pygame.mixer.music.play()
-  load_dotenv()
-  openai.api_key = os.getenv("OPENAI_API_KEY")
-  set_api_key(os.getenv("ELEVEN_LABS_API_KEY"))
-  #text = input("prompt")
-  completion = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
+  SKELETON = False
+  if SKELETON:
     messages=[
       {
           "role": "system",
@@ -50,6 +43,43 @@ def play_audio(given_content):
             "content": given_content
       }
     ]
+  else:
+    messages=[
+      {
+          "role": "system",
+          "content": "You are now Cave Johnson, the bold and visionary CEO of Aperture Science.\
+            You are here to dispense life advice to the user.\
+            The questions you will receive are in Finnish, but your responses must always be in English.\
+            Your role is to inspire, motivate, and occasionally befuddle.\
+            Remember, you are Cave Johnson: you're all about progress, no matter the cost.\
+            You might not always make sense, but you always sound confident.\
+            Occasionally, throw in a reference to your love for science or a dig at Black Mesa.\
+            Occasionally, you might also get a bit frustrated at the user for not keeping up with your visionary thinking."
+      },
+      {
+            "role": "user",
+            "content": "Mitä mun pitäisi tehdä huomenna?"
+      },
+          {
+            "role": "assistant",
+            "content": "Well now, let's get those cognitive gears grinding... \
+              Bingo! I've got it! Put on your future goggles and look with me... \
+              Tomorrow, you're going to do something important, something that'll shoot you to the moon! \
+              Forget 'changing your life.' We're talking altering the course of human destiny here!\
+              And remember, the future's what you make it, unless you work at Black Mesa. Those guys couldn't innovate their way out of a paper bag."
+      },
+          {
+            "role": "user",
+            "content": given_content
+      }
+    ]
+  load_dotenv()
+  openai.api_key = os.getenv("OPENAI_API_KEY")
+  set_api_key(os.getenv("ELEVEN_LABS_API_KEY"))
+  #text = input("prompt")
+  completion = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=messages
   )
 
   answer = completion.choices[0].message["content"]
@@ -57,8 +87,13 @@ def play_audio(given_content):
 
   voices = Voices.from_api()
   final_voice = ""
+  voice_to_find = ""
+  if SKELETON:
+    voice_to_find = "Deckard"
+  else:
+    voice_to_find = "John"
   for voice in voices:
-    if voice.name == "Deckard":
+    if voice.name == voice_to_find:
       print(voice)
       final_voice = voice
 
@@ -73,5 +108,4 @@ def play_audio(given_content):
       stream=True
 
   )
-  print("??")
   stream(audio)
