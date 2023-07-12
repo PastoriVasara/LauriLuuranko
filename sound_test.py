@@ -12,6 +12,7 @@ import sys
 import upload_audio
 import string
 import random
+import time
 
 
 
@@ -62,22 +63,27 @@ class Recorder:
 
 
 recorder = Recorder()
-print("Welcome to the skeleton fortuneteller")
-pygame.mixer.init()
-pygame.mixer.music.load("greetings.mp3")
-pygame.mixer.music.play()
-
+print("Welcome to the skeleton fortuneteller") 
 def generate_random_string(length=9):
     # Define the characters that will be used
     alphabet = string.ascii_letters + string.digits
-
     # Use random.choice to select characters randomly
     return ''.join(random.choice(alphabet) for i in range(length))
 
+def get_random_sound_from_folder(folder,wait):
+    pygame.mixer.init()
+    sounds = os.listdir(folder)
+    random_sound = random.randint(0,len(sounds)-1)
+    pygame.mixer.music.load(os.path.join(folder,sounds[random_sound]))
+    pygame.mixer.music.play()
+    if wait:
+        while pygame.mixer.music.get_busy():
+            pass
 
 def toggle_recording(e):  
     try:          
         if not recorder.is_recording:
+            get_random_sound_from_folder("greetings",True)
             recorder.start_recording()
         else:
             load_dotenv()
@@ -87,13 +93,14 @@ def toggle_recording(e):
             file_path = generate_random_string()+".wav"
             recorder.save_recording(file_path)
             upload_audio.uploadAudio(file_path,source,destination)
-            pygame.mixer.music.load("interesting.mp3")
-            pygame.mixer.music.play()
+
+            get_random_sound_from_folder("received",False)
             text_to_speak = runpod_test.get_transcription(file_path)  
             ai_skeleton.play_audio(text_to_speak)
-            pygame.mixer.music.load("listening.mp3")
-            pygame.mixer.music.play()
-            os.remove(os.path.join(source, file_path))  
+            time.sleep(2)
+            get_random_sound_from_folder("ready",True)
+
+            os.remove(os.path.join(source, file_path))    
     except Exception as e:
         print(e)
         sys.exit(1)

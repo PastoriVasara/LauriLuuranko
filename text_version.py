@@ -1,5 +1,5 @@
 import ai_skeleton
 
-text_to_speak = input("")
+#text_to_speak = input("")
 
-ai_skeleton.play_audio(text_to_speak)
+ai_skeleton.play_audio("pitäiskö tänään vetää kaljaa?")
